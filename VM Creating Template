@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_simpleLinuxVM1234_name": {
+            "defaultValue": "simpleLinuxVM1234",
+            "type": "String"
+        },
+        "disks_simpleLinuxVM1234_disk1_eb8c10e020a540b3b948df3cadc551b4_externalid": {
+            "defaultValue": "/subscriptions/a8108c2b-496c-424d-8347-ecc8afb6384c/resourceGroups/Test1/providers/Microsoft.Compute/disks/simpleLinuxVM1234_disk1_eb8c10e020a540b3b948df3cadc551b4",
+            "type": "String"
+        },
+        "networkInterfaces_simpleLinuxVM1234NetInt_externalid": {
+            "defaultValue": "/subscriptions/a8108c2b-496c-424d-8347-ecc8afb6384c/resourceGroups/Test1/providers/Microsoft.Network/networkInterfaces/simpleLinuxVM1234NetInt",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2022-11-01",
+            "name": "[parameters('virtualMachines_simpleLinuxVM1234_name')]",
+            "location": "westus",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B2s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_simpleLinuxVM1234_name'), '_disk1_eb8c10e020a540b3b948df3cadc551b4')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS",
+                            "id": "[parameters('disks_simpleLinuxVM1234_disk1_eb8c10e020a540b3b948df3cadc551b4_externalid')]"
+                        },
+                        "deleteOption": "Detach",
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_simpleLinuxVM1234_name')]",
+                    "adminUsername": "romanpolonsky",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        },
+                        "enableVMAgentPlatformUpdates": false
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_simpleLinuxVM1234NetInt_externalid')]"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
